@@ -5,9 +5,32 @@ from rest_framework import status
 from rest_framework.generics import ListAPIView
 from django.db.models import Q
 from .serializers import ClaimVerificationSerializer, FalseNewsSerializer, NewsArticleSerializer
+# from .models import FalseNews, TrueNews
+# from .services import CombinedAnalysisService, BraveNewsService, ModelTrainingService
 from .models import FalseNews
-from .services import CombinedAnalysisService, BraveNewsService
+from .services import BraveNewsService, GeminiService
 from datetime import datetime
+from django.utils import timezone
+
+# class RetrainModelAPIView(APIView):
+#     def post(self, request):
+#         """
+#         Retrain the DistilBERT model using data from MongoDB
+#         """
+#         try:
+#             training_service = ModelTrainingService()
+#             result = training_service.retrain_model()
+            
+#             if result['success']:
+#                 return Response(result, status=status.HTTP_200_OK)
+#             else:
+#                 return Response(result, status=status.HTTP_400_BAD_REQUEST)
+                
+#         except Exception as e:
+#             return Response({
+#                 'success': False,
+#                 'message': f'Error during retraining: {str(e)}'
+#             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class VerifyClaimAPIView(APIView):
     def post(self, request):
@@ -21,15 +44,15 @@ class VerifyClaimAPIView(APIView):
         try:
             # Initialize services
             brave_service = BraveNewsService()
-            analysis_service = CombinedAnalysisService()
+            gemini_service = GeminiService()
 
             # Get news articles from Brave
             news_articles = brave_service.get_news_articles(article_title)
 
-            # Analyze claim using combined service
-            analysis_result = analysis_service.analyze_claim(article_title, news_articles)
+            # Analyze claim using Gemini
+            analysis_result = gemini_service.analyze_claim(article_title, news_articles)
 
-            # Create FalseNews object
+            # Create FalseNews object with only the fields that exist in the model
             false_news = FalseNews.objects.create(
                 article_title=article_title,
                 veracity=analysis_result.get('veracity', False),
@@ -41,21 +64,13 @@ class VerifyClaimAPIView(APIView):
                 sources=analysis_result.get('sources', [])
             )
 
-            # Add model scores to response
-            response_data = FalseNewsSerializer(false_news).data
-            response_data['model_scores'] = analysis_result.get('model_scores', {})
+            # Serialize and return the response
+            serializer = FalseNewsSerializer(false_news)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-            return Response(response_data, status=status.HTTP_201_CREATED)
-
-        except ValueError as e:
+        except Exception as e:
             return Response(
                 {'error': str(e)},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        except Exception as e:
-            print(f"Error in VerifyClaimAPIView: {str(e)}")
-            return Response(
-                {'error': 'An unexpected error occurred while processing your request'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
