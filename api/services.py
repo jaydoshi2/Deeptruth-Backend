@@ -422,14 +422,12 @@ class BraveNewsService:
             }]
 
 class DistilBERTService:
-
     def __init__(self):
         try:
-            self.tokenizer = DistilBertTokenizer.from_pretrained(
-                'distilbert-base-uncased'
-            )
+            model_path = os.path.join(os.path.dirname(__file__), 'distil_bert_model')
+            self.tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
             self.model = DistilBertForSequenceClassification.from_pretrained(
-                'distilbert-base-uncased',
+                model_path,
                 num_labels=2  # Binary classification (true/false)
             )
             self.model.eval()  # Set to evaluation mode
@@ -451,19 +449,15 @@ class DistilBERTService:
                 max_length=512,
                 padding=True
             )
-
             # Get prediction
             with torch.no_grad():
                 outputs = self.model(**inputs)
                 probabilities = torch.softmax(outputs.logits, dim=1)
                 confidence_score = probabilities[0][1].item()  # Assuming 1 is true class
-            # print(confidence_score)
             return confidence_score
         except Exception as e:
             print(f"DistilBERT Error: {str(e)}")
             return 0.5  # Return neutral score on error
-
-
 class GeminiService:
     def __init__(self):
         self.api_key = os.getenv('GEMINI_API_KEY')
