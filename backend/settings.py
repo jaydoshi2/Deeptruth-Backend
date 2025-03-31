@@ -14,7 +14,7 @@ SECRET_KEY = 'django-insecure-your-secret-key'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']  # For development only
+ALLOWED_HOSTS = ['*,deeptruth.us']  # For development only
 
 
 # Application definition
@@ -119,4 +119,5 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",
     "http://0.0.0.0:5173",
     "http://172.31.15.245:5173",
+    "deeptruth.us",
 ] 

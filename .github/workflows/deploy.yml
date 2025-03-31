@@ -1,0 +1,35 @@
+name: Deploy on Push to Main
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Check out the repository (for running tests if needed)
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Optional: Run tests or linting (for checking/compiling your code)
+      - name: Run tests
+        run: |
+          python3 -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+          # Run your tests or code checks
+          python manage.py test
+
+      # Deploy to the server via SSH
+      - name: Deploy to VM
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.34.46.249.7 }}             # e.g., 34.46.249.7
+          username: ${{ secrets.workingjay2010 }}           # your VM username
+          key: ${{ secrets.b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZWQyNTUxOQAAACCqJzIFO0k+XU8so2eR7n8VwYAYr0C6wQpWyxVWIlxtPgAAAJgqH04MKh9ODAAAAAtzc2gtZWQyNTUxOQAAACCqJzIFO0k+XU8so2eR7n8VwYAYr0C6wQpWyxVWIlxtPgAAAEBMWc77EFp4OCieU2yYkpVIdem3+JFHI3rgCqfGW+K0AqonMgU7ST5dTyyjZ5HufxXBgBivQLrBClbLFVYiXG0+AAAAFWFkbWluQERFU0tUT1AtRDlHNUc1Rg== }}             # your private SSH key (set in GitHub Secrets)
+          port: 22
+          script: |
+            /home/jd2010/deploy.sh
