@@ -17,9 +17,9 @@ jobs:
       # Optional: Run tests or linting (for checking/compiling your code)
       - name: Run tests
         run: |
-          python3 -m venv venv
-          source venv/bin/activate
-          pip install -r requirements.txt
+          # python3 -m venv venv
+          # source venv/bin/activate
+          # pip install -r requirements.txt
           # Run your tests or code checks
           python manage.py test
 
