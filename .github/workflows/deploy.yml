@@ -1,30 +1,37 @@
-name: Deploy on Push to Main
+name: CI/CD Workflow
 
 on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - name: Set up Python 3.12
-        uses: actions/setup-python@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: 3.11  # Use Python 3.11 instead of 3.12
 
-      - name: Install dependencies and run tests
+      - name: Upgrade Pip, Setuptools, and Wheel
         run: |
-          python -m venv venv
-          source venv/bin/activate
-          python -m pip install --upgrade pip setuptools wheel  # Fix distutils issue
+          python -m pip install --upgrade pip setuptools wheel
+
+      - name: Install Dependencies
+        run: |
           pip install -r requirements.txt
-          python manage.py test
+
+      - name: Run Tests
+        run: |
+          pytest  # Modify based on your test framework
 
       # Deploy to the server via SSH
       - name: Deploy to VM
