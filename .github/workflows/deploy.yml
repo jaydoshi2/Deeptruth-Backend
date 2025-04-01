@@ -17,6 +17,11 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: "3.12"
+          
+      - name: Install python-dev
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-dev
 
       - name: Upgrade pip, setuptools, and wheel
         run: |
@@ -26,6 +31,10 @@ jobs:
         run: |
           python -m venv venv
           source venv/bin/activate
+          # Install setuptools with distutils first
+          pip install setuptools==65.5.0
+          # Try with --no-build-isolation for problematic packages
+          pip install numpy==1.23.2 --no-build-isolation
           pip install -r requirements.txt
           python manage.py test
 
