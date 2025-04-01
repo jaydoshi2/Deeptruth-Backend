@@ -22,15 +22,17 @@ jobs:
         run: |
           python -m venv venv
           source venv/bin/activate
+          python -m pip install --upgrade pip setuptools wheel  # Fix distutils issue
           pip install -r requirements.txt
           python manage.py test
+
       # Deploy to the server via SSH
       - name: Deploy to VM
         uses: appleboy/ssh-action@v0.1.8
         with:
-          host: ${{ secrets.VM_HOST }}             # e.g., 34.46.249.7
-          username: ${{ secrets.VM_USERNAME }}           # your VM username
-          key: ${{ secrets.VM_SSH_KEY }}             # your private SSH key (set in GitHub Secrets)
+          host: ${{ secrets.VM_HOST }}             
+          username: ${{ secrets.VM_USERNAME }}     
+          key: ${{ secrets.VM_SSH_KEY }}         
           port: 22
           script: |
             /home/jd2010/deploy.sh
