@@ -1,45 +1,40 @@
-name: CI/CD Workflow
+name: Deploy on Push to Main
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v4
         with:
-          python-version: 3.11  # Use Python 3.11 instead of 3.12
+          python-version: "3.12"
 
-      - name: Upgrade Pip, Setuptools, and Wheel
+      - name: Upgrade pip, setuptools, and wheel
         run: |
           python -m pip install --upgrade pip setuptools wheel
 
-      - name: Install Dependencies
+      - name: Install dependencies and run tests
         run: |
+          python -m venv venv
+          source venv/bin/activate
           pip install -r requirements.txt
+          python manage.py test
 
-      - name: Run Tests
-        run: |
-          pytest  # Modify based on your test framework
-
-      # Deploy to the server via SSH
       - name: Deploy to VM
         uses: appleboy/ssh-action@v0.1.8
         with:
-          host: ${{ secrets.VM_HOST }}             
-          username: ${{ secrets.VM_USERNAME }}     
-          key: ${{ secrets.VM_SSH_KEY }}         
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USERNAME }}
+          key: ${{ secrets.VM_SSH_KEY }}
           port: 22
           script: |
             /home/jd2010/deploy.sh
