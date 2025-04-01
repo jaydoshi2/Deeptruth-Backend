@@ -8,6 +8,16 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      GEMINI_API_KEY: ${{secrets.GEMINI_API_KEY}}
+      BRAVE_API_KEY: ${{secrets.BRAVE_API_KEY}}
+      MONGODB_NAME: ${{secrets.MONGODB_NAME}}
+      MONGODB_URI: ${{secrets.MONGODB_URI}}
+      MONGODB_USERNAME: ${{secrets.MONGODB_USERNAME}}
+      MONGODB_PASSWORD: ${{secrets.MONGODB_PASSWORD}}
+      DEBUG: ${{secrets.DEBUG}}
+
+
 
     steps:
       - name: Checkout repository
