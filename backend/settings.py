@@ -12,10 +12,9 @@ load_dotenv(BASE_DIR / '.env')
 SECRET_KEY = 'django-insecure-your-secret-key'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False  # Set to False in production
 
-ALLOWED_HOSTS = ['*,deeptruth.us']  # For development only
-
+ALLOWED_HOSTS = ['*', 'deeptruth.us']  # For development only
 
 # Application definition
 INSTALLED_APPS = [
@@ -103,22 +102,23 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [
-    # BASE_DIR / 'static'
+    BASE_DIR / "static",  # Uncomment if you have a static directory in your project
 ]
 
 # Default primary key field type
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # CORS settings
-CORS_ALLOW_ALL_ORIGINS = True  # For development only
+CORS_ALLOW_ALL_ORIGINS = False  # Set to False for stricter control in production
 CORS_ALLOW_CREDENTIALS = True
+
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # Vite default port
+    "http://localhost:5173",  # Vite default port for local development
     "http://127.0.0.1:5173",
     "http://0.0.0.0:5173",
-    "http://172.31.15.245:5173",
-    "deeptruth.us",
-    "https://deeptruth.us",
-] 
+    "http://172.31.15.245:5173",  # Replace with your actual local IP if needed
+    "https://deeptruth.us",  # Use HTTPS for production domains
+]
+
