@@ -17,11 +17,20 @@ jobs:
       MONGODB_PASSWORD: ${{secrets.MONGODB_PASSWORD}}
       DEBUG: ${{secrets.DEBUG}}
 
-
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: Create .env file
+        run: |
+          touch .env
+          echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" >> .env
+          echo "BRAVE_API_KEY=${{ secrets.BRAVE_API_KEY }}" >> .env
+          echo "MONGODB_NAME=${{ secrets.MONGODB_NAME }}" >> .env
+          echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" >> .env
+          echo "MONGODB_USERNAME=${{ secrets.MONGODB_USERNAME }}" >> .env
+          echo "MONGODB_PASSWORD=${{ secrets.MONGODB_PASSWORD }}" >> .env
+          echo "DEBUG=${{ secrets.DEBUG }}" >> .env
 
       - name: Set up Python 3.10
         uses: actions/setup-python@v4
