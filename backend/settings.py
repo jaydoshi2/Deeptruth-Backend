@@ -120,4 +120,5 @@ CORS_ALLOWED_ORIGINS = [
     "http://0.0.0.0:5173",
     "http://172.31.15.245:5173",
     "deeptruth.us",
+    "https://deeptruth.us",
 ] 
