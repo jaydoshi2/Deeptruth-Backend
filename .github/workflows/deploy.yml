@@ -50,7 +50,7 @@ jobs:
           pip install -r requirements_fixed.txt
           python manage.py test
 
-      - name: Deploy to VM
+      - name: Stop existing Django server
         uses: appleboy/ssh-action@v0.1.8
         with:
           host: ${{ secrets.VM_HOST }}
@@ -58,48 +58,51 @@ jobs:
           key: ${{ secrets.VM_SSH_KEY }}
           port: 22
           script: |
-              {
-              cd /home/jd2010/Deeptruth-Backend
-              echo "Checking for existing Django server..."
-              pids=$(ps aux | grep '[m]anage.py runserver' | awk '{print $2}')
-              if [ -n "$pids" ]; then
-                echo "Found Django server with PIDs: $pids, shutting down gracefully..."
-                for pid in $pids; do
-                  kill $pid 2>/dev/null || true
-                done
-                echo "Waiting for processes to terminate..."
-                sleep 3  # Give processes time to terminate
-                
-                # Check if processes are still running and force kill if necessary
-                for pid in $pids; do
-                  if ps -p $pid > /dev/null 2>&1; then
-                    echo "Process $pid still running, forcing termination..."
-                    kill -9 $pid 2>/dev/null || true
-                  fi
-                done
-              else
-                echo "No Django server running"
-              fi
-
-              echo "Pulling latest code..."
-              git pull origin main
-
-              echo "Starting Django server in background..."
-              nohup python3 manage.py runserver 0.0.0.0:8000 > nohup.out 2>&1 < /dev/null &
-              new_pid=$!
-              echo "Server started successfully with PID: $new_pid"
-
-              # Verify the server is running
-              sleep 2
-              if ps -p $new_pid > /dev/null; then
-                echo "Confirmed server is running"
-              else
-                echo "Warning: Server may have failed to start. Check nohup.out for details."
-              fi
+            cd /home/jd2010/Deeptruth-Backend
+            echo "Checking for existing Django server..."
+            pids=$(ps aux | grep '[m]anage.py runserver' | awk '{print $2}')
+            if [ -n "$pids" ]; then
+              echo "Found Django server with PIDs: $pids, shutting down gracefully..."
+              for pid in $pids; do
+                kill $pid 2>/dev/null || true
+              done
+              echo "Waiting for processes to terminate..."
+              sleep 3  # Give processes time to terminate
               
-              exit 0  # Force successful exit
-              } || {
-              echo "An error occurred, but ensuring workflow continues"
-              exit 0  # Force successful exit even if something fails
-              }
+              # Check if processes are still running and force kill if necessary
+              for pid in $pids; do
+                if ps -p $pid > /dev/null 2>&1; then
+                  echo "Process $pid still running, forcing termination..."
+                  kill -9 $pid 2>/dev/null || true
+                fi
+              done
+            else
+              echo "No Django server running"
+            fi
           continue-on-error: true
+
+      - name: Deploy updated code and start server
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USERNAME }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          port: 22
+          script: |
+            cd /home/jd2010/Deeptruth-Backend
+            echo "Pulling latest code..."
+            git pull origin main
+
+            echo "Starting Django server in background..."
+            nohup python3 manage.py runserver 0.0.0.0:8000 > nohup.out 2>&1 < /dev/null &
+            new_pid=$!
+            echo "Server started successfully with PID: $new_pid"
+
+            # Verify the server is running
+            sleep 2
+            if ps -p $new_pid > /dev/null; then
+              echo "Confirmed server is running"
+            else
+              echo "Warning: Server may have failed to start. Check nohup.out for details."
+              cat nohup.out
+            fi
