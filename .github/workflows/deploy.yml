@@ -60,8 +60,17 @@ jobs:
           script: |
             cd /home/jd2010/Deeptruth-Backend
             echo "Killing existing Django server (if any)..."
-            pkill -f runserver || echo "No server running"
+            pids=$(ps aux | grep '[r]unserver' | awk '{print $2}')
+            if [ -n "$pids" ]; then
+              echo "Found Django server with PIDs: $pids"
+              kill $pids
+            else
+              echo "No Django server running"
+            fi
+
             echo "Pulling latest code..."
             git pull origin main
+
             echo "Starting Django server..."
             nohup python3 manage.py runserver 0.0.0.0:8000 > nohup.out 2>&1 &
+
