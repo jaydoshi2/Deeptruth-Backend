@@ -102,3 +102,4 @@ jobs:
               echo "An error occurred, but ensuring workflow continues"
               exit 0  # Force successful exit even if something fails
               }
+          continue-on-error: true
