@@ -5,7 +5,6 @@ DeepTruth is a powerful backend service that leverages artificial intelligence t
 ## 🌟 Features
 
 - **False News Detection**: Analyzes news articles for potential misinformation
-- **Claim Verification**: Verifies specific claims using AI and fact-checking
 - **MongoDB Integration**: Efficient data storage and retrieval
 - **RESTful API**: Well-structured endpoints for easy integration
 - **Docker Support**: Containerized deployment for consistent environments
@@ -30,6 +29,7 @@ DeepTruth is a powerful backend service that leverages artificial intelligence t
 - Docker and Docker Compose
 - Python 3.10 or higher (if running locally)
 - MongoDB Atlas account (for cloud database)
+- sckit-learn libarary
 
 ## 🔧 Installation
 
@@ -61,30 +61,15 @@ docker-compose up --build
 
 ## 📝 API Endpoints
 
-### 1. False News Detection
-```bash
-POST /api/false-news/
-
-Request Body:
-{
-    "url": "https://example.com/news-article",
-    "title": "Example News Title",
-    "content": "Article content...",
-    "source": "News Source",
-    "published_date": "2024-03-21T12:00:00Z"
-}
 ```
 
-### 2. Claim Verification
+### 1. false news Verification
 ```bash
 POST /api/verify-claim/
 
 Request Body:
 {
-    "claim": "The claim to verify",
-    "context": "Additional context",
-    "source": "Source of the claim",
-    "language": "en"
+   'article_title': "the respective title"
 }
 ```
 
@@ -95,19 +80,6 @@ Run the test suite:
 docker-compose exec web python manage.py test
 ```
 
-## 📚 Documentation
-
-For detailed API documentation, visit:
-```
-http://localhost:8000/api/docs/
-```
-
-## 🔒 Security
-
-- All API endpoints are protected with authentication
-- Environment variables for sensitive data
-- Secure MongoDB connection with authentication
-
 ## 🤝 Contributing
 
 1. Fork the repository
@@ -115,14 +87,6 @@ http://localhost:8000/api/docs/
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 👥 Authors
-
-- Your Name - Initial work
 
 ## 🙏 Acknowledgments
 
