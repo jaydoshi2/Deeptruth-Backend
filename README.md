@@ -5,8 +5,8 @@ DeepTruth is a powerful backend service that leverages artificial intelligence t
 ## 🌟 Features
 
 - **False News Detection**: Analyzes news articles for potential misinformation
-- **True News Verification**: Validates and stores verified true news articles
-- **MongoDB Integration**: Efficient data storage and retrieval using Djongo
+- **Claim Verification**: Verifies specific claims using AI and fact-checking
+- **MongoDB Integration**: Efficient data storage and retrieval
 - **RESTful API**: Well-structured endpoints for easy integration
 - **Docker Support**: Containerized deployment for consistent environments
 - **AI-Powered Analysis**: Uses Google Generative AI and Transformers for content analysis
@@ -33,6 +33,7 @@ DeepTruth is a powerful backend service that leverages artificial intelligence t
 - Docker and Docker Compose
 - Python 3.10 or higher (if running locally)
 - MongoDB Atlas account (for cloud database)
+- sckit-learn libarary
 
 ## 🔧 Installation
 
@@ -91,31 +92,24 @@ POST /api/false-news/
 
 Request Body:
 {
-    "article_title": "News Article Title",
-    "veracity": false,
-    "confidence_score": 0.95,
-    "explanation": "Detailed explanation...",
-    "category": "Politics",
-    "key_findings": ["finding1", "finding2"],
-    "impact_level": "MISLEADING",
-    "sources": ["source1.com", "source2.com"]
+    "url": "https://example.com/news-article",
+    "title": "Example News Title",
+    "content": "Article content...",
+    "source": "News Source",
+    "published_date": "2024-03-21T12:00:00Z"
 }
 ```
 
-### 2. True News Verification
+### 2. Claim Verification
 ```bash
 POST /api/true-news/
 
 Request Body:
 {
-    "article_title": "News Article Title",
-    "veracity": true,
-    "confidence_score": 0.98,
-    "explanation": "Detailed explanation...",
-    "category": "Science",
-    "key_findings": ["finding1", "finding2"],
-    "impact_level": "VERIFIED",
-    "sources": ["source1.com", "source2.com"]
+    "claim": "The claim to verify",
+    "context": "Additional context",
+    "source": "Source of the claim",
+    "language": "en"
 }
 ```
 
@@ -128,10 +122,16 @@ docker-compose exec web python manage.py test
 
 ## 📚 Documentation
 
-For detailed API documentation, visit the API documentation endpoint after running the server:
+For detailed API documentation, visit:
 ```
 http://localhost:8000/api/docs/
 ```
+
+## 🔒 Security
+
+- All API endpoints are protected with authentication
+- Environment variables for sensitive data
+- Secure MongoDB connection with authentication
 
 ## 🤝 Contributing
 
@@ -140,14 +140,6 @@ http://localhost:8000/api/docs/
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 👥 Authors
-
-- Your Name - Initial work
 
 ## 🙏 Acknowledgments
 
