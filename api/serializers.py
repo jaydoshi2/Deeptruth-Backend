@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import FalseNews
+from .models import FalseNews, TrueNews  # Make sure TrueNews is imported
 
 class FalseNewsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,6 +19,26 @@ class FalseNewsSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ['_id', 'created_at', 'updated_at']
 
+
+class TrueNewsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TrueNews
+        fields = [
+            '_id',
+            'article_title',
+            'veracity',
+            'confidence_score',
+            'explanation',
+            'category',
+            'key_findings',
+            'impact_level',
+            'sources',
+            'created_at',
+            'updated_at'
+        ]
+        read_only_fields = ['_id', 'created_at', 'updated_at']
+
+
 class NewsArticleSerializer(serializers.Serializer):
     title = serializers.CharField()
     link = serializers.URLField()
@@ -26,5 +46,6 @@ class NewsArticleSerializer(serializers.Serializer):
     source = serializers.CharField()
     time_published = serializers.CharField(required=False)
 
+
 class ClaimVerificationSerializer(serializers.Serializer):
-    article_title = serializers.CharField() 
+    article_title = serializers.CharField()

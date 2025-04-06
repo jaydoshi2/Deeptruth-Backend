@@ -27,3 +27,30 @@ class FalseNews(models.Model):
         
     def __str__(self):
         return f"{self.article_title} - {self.veracity}" 
+    
+class TrueNews(models.Model):
+    _id = models.ObjectIdField()
+    article_title = models.CharField(max_length=500)
+    veracity = models.BooleanField(default=True)
+    confidence_score = models.FloatField()
+    explanation = models.TextField()
+    category = models.CharField(max_length=100)
+    key_findings = models.JSONField(default=list)
+    impact_level = models.CharField(
+        max_length=20,
+        choices=[
+            ('VERIFIED', 'Verified'),
+            ('MISLEADING', 'Misleading'),
+            ('PARTIAL', 'Partial')
+        ],
+        default='VERIFIED'  # usually True news would default to "VERIFIED"
+    )
+    sources = models.JSONField(default=list)
+    created_at = models.DateTimeField(default=datetime.now)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        db_table = 'true_news'
+        
+    def __str__(self):
+        return f"{self.article_title} - {self.veracity}"
